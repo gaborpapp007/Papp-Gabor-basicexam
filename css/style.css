@@ -9,6 +9,17 @@ div {
   padding: 20px;
 }
 
+.divclass {
+  display: inline-block;
+  max-width: 33%;
+  min-width: 33%;
+  border-color: red;
+}
+
+.eredmeny {
+  background-color: brown;
+}
+
 .container {
   width: 100%;
   min-height: 100vh;

@@ -13,14 +13,46 @@ function successAjax(xhttp) {
   // Innen lesz elérhető a JSON file tartalma, tehát az adatok amikkel dolgoznod kell
   var userDatas = JSON.parse(xhttp.responseText);
 
+  var searchButton = document.getElementById('search-button');
+  searchButton.addEventListener('click', function () {
+    var searchInput = document.getElementById('search-text').value;
+    var talalat = {};
+    for (var i = 0; i < userDatas.length; i++) {
+      if (userDatas[i].model.toLowerCase().indexOf(searchInput.toLowerCase()) > -1) {
+        talalat = userDatas[i];
+        break;
+      }
+    }
+    var container = document.createElement("div");
+    var keresettAdatai = document.createElement("div");
+    var keresettKepe = document.createElement("img");
+    var adatok1 = "";
+    container.className = "eredmeny";
+    keresettAdatai.className = "adatok1"
+    keresettKepe.src = "img\/" + talalat.image;
+    keresettKepe.alt = talalat.model;
+    document.querySelector(".one-spaceship").appendChild(container);
+    document.querySelector(".eredmeny").appendChild(keresettKepe);
+    for (var j in talalat) {
+      adatok1 += j + ": " + talalat[j] + "<br>";
+      keresettAdatai.innerHTML = adatok1;
+    }
+    document.querySelector(".eredmeny").appendChild(keresettAdatai);
+    console.log(searchInput);
 
+
+  });
   buborekos(userDatas);
   rendezesArSzerintNovekvo(userDatas);
   torlesAholNull(userDatas);
   ertekModositas(userDatas);
   megjelenites(userDatas);
   statisztika(userDatas);
+
+
+
 }
+
 
 function buborekos(tomb) {
   var csere = 0;
@@ -57,20 +89,6 @@ function rendezesArSzerintNovekvo(tomb) {
   console.log(egyesitett);
   //return egyesitett;
 }
-
-document.querySelector("#search-button").addEventListener('click', function kereses(userDatas) {
-  var inputMezo = document.querySelector("#search-text").value;
-  var keresettHajo = {};
-  var talalat = true;
-  for (let i = 0; i < userDatas.length; i++) {
-    if (userDatas[i].toLowerCase().model == inputMezo.toLowerCase() && talalat) {
-      keresettHajo += userDatas[i];
-      talalat = false;
-    }
-  }
-  alert(keresettHajo);
-
-});
 
 function torlesAholNull(tomb) {
   for (var i = 0; i < tomb.length; i++) {
@@ -143,7 +161,7 @@ function statisztika(tomb) {
     }
   }
   for (let i = 0; i < tomb.length; i++) {
-    if (tomb[i].cargo_capacity > legnagyobbHajo.cargo_capacity) {
+    if (tomb[i].cargo_capacity > legnagyobbHajo.cargo_capacity && tomb[i].cargo_capacity !== "unknown") {
       legnagyobbHajo = tomb[i];
       legnagyobbHajoNeve = tomb[i].model;
     }
@@ -153,7 +171,7 @@ function statisztika(tomb) {
       osszesUtas += parseInt(tomb[i].passengers);
   }
   for (let i = 0; i < tomb.length; i++) {
-    if (tomb[i].lengthiness > leghosszabbHajo.lengthiness) {
+    if (tomb[i].lengthiness > leghosszabbHajo.lengthiness && tomb[i].lengthiness !== "unknown") {
       leghosszabbHajo = tomb[i];
       leghosszabbHajoKepe = tomb[i].image;
     }
@@ -171,18 +189,22 @@ function statisztika(tomb) {
   document.getElementById("statisztika").appendChild(leghosszabbHajoKepe);
 }
 
-function kereses(tomb) {
-  var inputMezo = document.querySelector("#search-text").value;
-  var keresettHajo = {};
-  var talalat = true;
-  for (let i = 0; i < tomb.length; i++) {
-    if (tomb[i].toLowerCase().model == inputMezo.toLowerCase() && talalat) {
-      keresettHajo += tomb[i];
-      talalat = false;
-    }
-  }
-  alert(keresettHajo.model);
-}
+// function kereses(tomb) {
+//   var inputMezo = document.querySelector("#search-text").value;
+//   var keresettHajo = {};
+//   var talalat = true;
+//   for (let i = 0; i < tomb.length; i++) {
+//     if (tomb[i].toLowerCase().model == inputMezo.toLowerCase() && talalat) {
+//       keresettHajo += tomb[i];
+//       talalat = false;
+//     }
+//   }
+//   var keresettKepe = document.createElement("img");
+//   keresettKepe.src = "img\/" + keresettHajo.image;
+//   keresettKepe.alt = keresettHajo.model;
+//   document.querySelector(".one-spaceship").appendChild(keresettKepe);
+//   alert(keresettHajo);
+// }
 
 
 getData('/json/spaceships.json', successAjax);
