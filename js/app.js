@@ -15,11 +15,11 @@ function successAjax(xhttp) {
 
 
   buborekos(userDatas);
-  //rendezesArSzerintNovekvo(userDatas);
+  rendezesArSzerintNovekvo(userDatas);
   torlesAholNull(userDatas);
   ertekModositas(userDatas);
   megjelenites(userDatas);
-  adatokKiiratasa(userDatas);
+  statisztika(userDatas);
 }
 
 function buborekos(tomb) {
@@ -28,7 +28,7 @@ function buborekos(tomb) {
   while (volt_csere) {
     volt_csere = false;
     for (i = 0; i < tomb.length - 1; ++i) {
-      if (tomb[i].cost_in_credits > tomb[i + 1].cost_in_credits) { // ha nagyobb, akkor csere
+      if (parseInt(tomb[i].cost_in_credits) > parseInt(tomb[i + 1].cost_in_credits)) { // ha nagyobb, akkor csere
         volt_csere = true;
         csere = tomb[i];
         tomb[i] = tomb[i + 1];
@@ -36,30 +36,41 @@ function buborekos(tomb) {
       }
     }
   }
-  console.log(tomb);
+  //console.log(tomb);
   return tomb;
 }
 
-// function rendezesArSzerintNovekvo(tomb) {
-//   var nemSzam = [];
-//   var szam = [];
-//   var egyesitett = [];
-//   for (var k in tomb) {
-//     for (let i = 0; i < tomb.length; i++) {
-//       if (tomb[k][i] == "unkonwn") {
-//         nemSzam.push(tomb[k]);
-//       } else {
-//         szam.push(tomb[k]);
-//       }
+function rendezesArSzerintNovekvo(tomb) {
+  var costNull = [];
+  var costNot = [];
+  var egyesitett = [];
 
-//     }
-//   }
-//   szam = buborekos(szam);
-//   egyesitett = Object.assign(szam, nemSzam);
-//   console.log(egyesitett);
-//   return egyesitett;
-// }
+  for (let i = 0; i < tomb.length; i++) {
+    if (tomb[i].cost_in_credits == null) {
+      costNull.push(tomb[i]);
+    } else {
+      costNot.push(tomb[i]);
+    }
+  }
+  var costNotNull = buborekos(costNot);
+  egyesitett = costNotNull.concat(costNull);
+  console.log(egyesitett);
+  //return egyesitett;
+}
 
+document.querySelector("#search-button").addEventListener('click', function kereses(userDatas) {
+  var inputMezo = document.querySelector("#search-text").value;
+  var keresettHajo = {};
+  var talalat = true;
+  for (let i = 0; i < userDatas.length; i++) {
+    if (userDatas[i].toLowerCase().model == inputMezo.toLowerCase() && talalat) {
+      keresettHajo += userDatas[i];
+      talalat = false;
+    }
+  }
+  alert(keresettHajo);
+
+});
 
 function torlesAholNull(tomb) {
   for (var i = 0; i < tomb.length; i++) {
@@ -67,7 +78,7 @@ function torlesAholNull(tomb) {
       tomb.splice(i, 1);
     }
   }
-  console.log(tomb);
+  //console.log(tomb);
   return tomb;
 }
 
@@ -81,7 +92,7 @@ function ertekModositas(tomb) {
     }
 
   }
-  console.log(tomb);
+  //console.log(tomb);
   return tomb;
 }
 
@@ -115,12 +126,63 @@ function megjelenites(tomb) {
   //   }
   // }
 }
-
-function adatokKiiratasa(tomb) {
+// Készítened kell egy statisztikát, mely a shapceship-list class-ű div aljára a következő adatokat fogja beleírni:
+// * Egy fős (crew = 1) legénységgel rendelkező hajók darabszáma.
+// * A legnagyobb cargo_capacity-vel rendelkező hajó neve (model)
+// * Az összes hajó utasainak (passengers) összesített száma
+// * A leghosszabb(lengthiness) hajó képe
+function statisztika(tomb) {
+  var darabszam = 0;
+  var legnagyobbHajo = tomb[0];
+  var legnagyobbHajoNeve = "";
+  var osszesUtas = 0;
+  var leghosszabbHajo = tomb[0];
   for (let i = 0; i < tomb.length; i++) {
-    for (const key in tomb) {
-      console.log(tomb[i][key].value);
+    if (tomb[i].crew == 1) {
+      darabszam += 1;
     }
   }
+  for (let i = 0; i < tomb.length; i++) {
+    if (tomb[i].cargo_capacity > legnagyobbHajo.cargo_capacity) {
+      legnagyobbHajo = tomb[i];
+      legnagyobbHajoNeve = tomb[i].model;
+    }
+  }
+  for (let i = 0; i < tomb.length; i++) {
+    if (tomb[i].passengers !== "unknown")
+      osszesUtas += parseInt(tomb[i].passengers);
+  }
+  for (let i = 0; i < tomb.length; i++) {
+    if (tomb[i].lengthiness > leghosszabbHajo.lengthiness) {
+      leghosszabbHajo = tomb[i];
+      leghosszabbHajoKepe = tomb[i].image;
+    }
+  }
+  var statisztikaDiv = document.createElement("div");
+  var statisztikaP = document.createElement("p");
+  var leghosszabbHajoKepe = document.createElement("img");
+  statisztikaDiv.id = "statisztika";
+  statisztikaP.innerHTML = "Egy fős legénységgel rendelkező hajók darabszáma:" + darabszam + "<br>" + "A legnagyobb cargo_capacity-vel rendelkező hajó neve: " + legnagyobbHajoNeve + "<br>" +
+    "Az összes hajó utasainak összesített száma: " + osszesUtas;
+  leghosszabbHajoKepe.src = "img\/" + leghosszabbHajo.image;
+  leghosszabbHajoKepe.alt = leghosszabbHajo.model;
+  document.querySelector(".shapceship-list").appendChild(statisztikaDiv);
+  document.getElementById("statisztika").appendChild(statisztikaP);
+  document.getElementById("statisztika").appendChild(leghosszabbHajoKepe);
 }
+
+function kereses(tomb) {
+  var inputMezo = document.querySelector("#search-text").value;
+  var keresettHajo = {};
+  var talalat = true;
+  for (let i = 0; i < tomb.length; i++) {
+    if (tomb[i].toLowerCase().model == inputMezo.toLowerCase() && talalat) {
+      keresettHajo += tomb[i];
+      talalat = false;
+    }
+  }
+  alert(keresettHajo.model);
+}
+
+
 getData('/json/spaceships.json', successAjax);

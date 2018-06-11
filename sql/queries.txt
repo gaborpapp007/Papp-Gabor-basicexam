@@ -9,19 +9,25 @@ FROM `transport`
 order by cargo_capacity DESC
 LIMIT 3;
 
-3:
+3:A feladat eredeti kiírása szerint
 SELECT model as Típus
 FROM `transport` 
 where cargo_capacity=1 and passengers=1 AND max_atmosphering_speed=1 AND crew=1 AND (manufacturer like 'A%' or manufacturer like 'B%' or manufacturer LIKE 'c%');
+
+3.1:Józsi kiegészítése szerint
+SELECT model as Típus
+FROM `transport` 
+where crew=1 AND (manufacturer like 'A%' or manufacturer like 'B%' or manufacturer LIKE 'c%')
 
 4:
 SELECT * 
 FROM `transport` 
 WHERE manufacturer LIKE '%Corporation%' AND passengers>0 AND (cost_in_credits BETWEEN 10000 AND 200000);
 
-5:
+5:A feladat eredeti kiírása szerint
 SELECT model as Megnevezés, manufacturer as Gyártó
 FROM `transport` 
 WHERE (crew BETWEEN 1 and 5) AND passengers <>0 and passengers is not null and cargo_capacity is not null
 GROUP by crew
 LIMIT 3;
+
