@@ -16,7 +16,8 @@ function successAjax(xhttp) {
 
 
   rendezesArSzerintNovekvo(userDatas);
-  console.log(userDatas);
+  torlesAholNull(userDatas);
+  ertekModositas(userDatas);
 }
 
 function rendezesArSzerintNovekvo(tomb) {
@@ -33,15 +34,35 @@ function rendezesArSzerintNovekvo(tomb) {
       }
     }
   }
+  console.log(tomb);
   return tomb;
 }
 
 function torlesAholNull(tomb) {
-  for (var i = 0; i < array.length; i++) {
+  for (var i = 0; i < tomb.length; i++) {
     if (tomb[i].consumables == null) {
       tomb.splice(i, 1);
     }
   }
+  console.log(tomb);
   return tomb;
+}
+
+function ertekModositas(tomb) {
+  for (let i = 0; i < tomb.length; i++) {
+    for (const key in tomb[i]) {
+      if (tomb[i][key] == null) {
+        tomb[i][key] = "unknown";
+
+      }
+    }
+
+  }
+  console.log(tomb);
+  return tomb;
+}
+
+function megjelenites(tomb) {
+
 }
 getData('/json/spaceships.json', successAjax);
